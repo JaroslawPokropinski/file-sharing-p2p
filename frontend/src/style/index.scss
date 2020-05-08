@@ -1,0 +1,21 @@
+$background-color: #473b41;
+$primary-color: #ca4095;
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@import 'button.scss';
+@import '../Share/Share.scss';
+@import '../ModalContent/ModalContent.scss';
+@import '../Download/Download.scss';

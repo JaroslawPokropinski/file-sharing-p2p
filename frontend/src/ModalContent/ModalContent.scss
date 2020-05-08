@@ -1,0 +1,25 @@
+.modal-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 40px;
+
+  .modal-body {
+    text-align: center;
+  }
+
+  .qrcode {
+    width: 30vh !important;
+    height: 30vh !important;
+    padding: 8px;
+  }
+
+  img {
+    width: 30vh;
+    height: calc(30vh * 868 / 1257);
+  }
+
+  .button {
+    margin-top: 16px;
+  }
+}

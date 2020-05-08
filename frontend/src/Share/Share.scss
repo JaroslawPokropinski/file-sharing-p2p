@@ -1,0 +1,71 @@
+
+.share-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  background-color: $background-color;
+  height: 100vh;
+
+  .file-drop-area {
+    z-index: 1;
+    background-color: white;
+    border-radius: 50%;
+    margin-top: 20vh;
+    width: 60vh;
+    height: 60vh;
+    img {
+      margin-top: 15vh;
+      margin-left: 15vh;
+      width: 30vh;
+    }
+  }
+  
+  .overlay {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba($color: #000000, $alpha: 0.5);
+  }
+
+  .hide-overlay {
+    opacity: 0;
+    transition-duration: 750ms;
+  }
+
+  .show-overlay {
+    opacity: 1;
+    transition-duration: 750ms;
+  }
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: white;
+  border-radius: 8px;
+  transform: translate(-50%, -50%)
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close{
+  opacity: 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($color: #000000, $alpha: 0.5);
+}
