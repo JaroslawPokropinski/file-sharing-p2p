@@ -1,4 +1,4 @@
 export default {
-  wsUrl: 'wss://filesharing.pokropinski.xyz',
-  url: 'https://filesharing.pokropinski.xyz',
+  wsUrl: 'wss://pokropinski.xyz/fileshare',
+  url: 'https://pokropinski.xyz/fileshare',
 };

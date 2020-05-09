@@ -5,8 +5,31 @@ import Filereader from './Filereader';
 import QRCode from 'qrcode.react';
 import server from '../config/server';
 
+const waitForConnection = (onUUID: (uuid: string, file: File) => Peer.Instance, file: File) => {
+  let peer: Peer.Instance | null = null;
+  const socket = new WebSocket(server.wsUrl);
+  socket.onopen = () => {
+    const data = JSON.stringify({ event: 'share' });
+    socket.send(data);
+  };
+  socket.onmessage = function (ev) {
+    console.log(ev);
+    const data = JSON.parse(ev.data);
+    if (data.event === 'id') {
+      peer = onUUID(data.data, file);
+    }
+    if (data.event === 'signal') {
+      if (peer === null) {
+        console.error('Peer is null!');
+        return;
+      }
+      peer.signal(data.data);
+    }
+  };
+};
+
 function ModalContent(props: { file: File; onClose: () => void }) {
-  const [activeDownloads, setActiveDownloads] = useState(0);
+  // const [activeDownloads, setActiveDownloads] = useState(0);
   const [uuid, setUUID] = useState(null as null | string);
 
   const onUUID = (uuid: string, file: File): Peer.Instance => {
@@ -33,7 +56,8 @@ function ModalContent(props: { file: File; onClose: () => void }) {
       });
     });
     peer.on('close', () => {
-      setActiveDownloads((activeDownloads) => activeDownloads - 1);
+      // setActiveDownloads((activeDownloads) => activeDownloads - 1);
+      waitForConnection(onUUID, props.file);
     });
 
     peer.on('error', (err) => {
@@ -45,30 +69,11 @@ function ModalContent(props: { file: File; onClose: () => void }) {
   };
 
   useEffect(() => {
-    let peer: Peer.Instance | null = null;
-    const socket = new WebSocket(server.wsUrl);
-    socket.onopen = () => {
-      const data = JSON.stringify({ event: 'share' });
-      socket.send(data);
-    };
-    socket.onmessage = function (ev) {
-      console.log(ev);
-      const data = JSON.parse(ev.data);
-      if (data.event === 'id') {
-        peer = onUUID(data.data, props.file);
-      }
-      if (data.event === 'signal') {
-        if (peer === null) {
-          console.error('Peer is null!');
-          return;
-        }
-        peer.signal(data.data);
-      }
-    };
+    waitForConnection(onUUID, props.file);
   }, [props.file]);
 
   const getUrl = () => {
-    return `${window.location.origin}/#/download/${uuid}`;
+    return `${window.location.href}download/${uuid}`;
   };
 
   return (

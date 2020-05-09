@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Query, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, HttpException, HttpStatus, Logger, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { WsResponse, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Observable, from, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { join } from 'path';
 
-@Controller()
+@Controller('fileshare')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -33,6 +34,11 @@ export class AppController {
     } else {
       return this.appService.getSignals(uuid);
     }
+  }
+  
+  @Get('/app/*')
+  getApp(@Res() res: any) {
+    res.sendFile(join(__dirname, '..', '..', 'frontend', 'build', 'index.html'));
   }
 
   
