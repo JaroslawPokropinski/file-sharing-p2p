@@ -1,4 +1,4 @@
 export default {
-  wsUrl: 'wss://pokropinski.xyz/fileshare',
-  url: 'https://pokropinski.xyz/fileshare',
+  wsUrl: 'wss://peer-file-share.herokuapp.com/',
+  url: 'https://peer-file-share.herokuapp.com/fileshare/',
 };

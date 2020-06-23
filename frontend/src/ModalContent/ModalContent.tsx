@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Peer from 'simple-peer';
 import axios from '../config/axios';
 import Filereader from './Filereader';
@@ -32,45 +32,48 @@ function ModalContent(props: { file: File; onClose: () => void }) {
   // const [activeDownloads, setActiveDownloads] = useState(0);
   const [uuid, setUUID] = useState(null as null | string);
 
-  const onUUID = (uuid: string, file: File): Peer.Instance => {
-    setUUID(uuid);
-    let peer: Peer.Instance | null = new Peer({ initiator: true });
-    peer.on('signal', (data) => {
-      // send 'data' on server
-      const strData = JSON.stringify(data);
-      axios.post('/signal', { uuid, signal: Buffer.from(strData).toString('base64') });
-    });
-
-    peer.on('connect', () => {
-      console.log('connected');
-      peer?.send(file.name);
-      const reader = new Filereader(file);
-      peer?.on('data', () => {
-        if (reader.isFinished()) {
-          peer?.destroy();
-        } else {
-          reader.getNextChunk((chunk) => {
-            peer?.send(chunk);
-          });
-        }
+  const onUUID = useCallback(
+    (uuid: string, file: File): Peer.Instance => {
+      setUUID(uuid);
+      let peer: Peer.Instance | null = new Peer({ initiator: true });
+      peer.on('signal', (data) => {
+        // send 'data' on server
+        const strData = JSON.stringify(data);
+        axios.post('/signal', { uuid, signal: Buffer.from(strData).toString('base64') });
       });
-    });
-    peer.on('close', () => {
-      // setActiveDownloads((activeDownloads) => activeDownloads - 1);
-      waitForConnection(onUUID, props.file);
-    });
 
-    peer.on('error', (err) => {
-      console.error(err.message);
-      peer = null;
-    });
+      peer.on('connect', () => {
+        console.log('connected');
+        peer?.send(file.name);
+        const reader = new Filereader(file);
+        peer?.on('data', () => {
+          if (reader.isFinished()) {
+            peer?.destroy();
+          } else {
+            reader.getNextChunk((chunk) => {
+              peer?.send(chunk);
+            });
+          }
+        });
+      });
+      peer.on('close', () => {
+        // setActiveDownloads((activeDownloads) => activeDownloads - 1);
+        waitForConnection(onUUID, props.file);
+      });
 
-    return peer;
-  };
+      peer.on('error', (err) => {
+        console.error(err.message);
+        peer = null;
+      });
+
+      return peer;
+    },
+    [setUUID, props.file],
+  );
 
   useEffect(() => {
     waitForConnection(onUUID, props.file);
-  }, [props.file]);
+  }, [props.file, onUUID]);
 
   const getUrl = () => {
     return `${window.location.href}download/${uuid}`;
