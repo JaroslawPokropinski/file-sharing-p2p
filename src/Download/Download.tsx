@@ -1,16 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import WebTorrent from 'webtorrent';
 import save from './saveToDrive';
 import humanFileSize from './humanBytes';
 import downloadImg from './download_file.png';
+import { DownloadContext } from '../App/App';
 
 function Download() {
-  const { fileID } = useParams<{ fileID: string }>();
+  const params = useParams<{ fileID?: string }>();
+  const context = useContext(DownloadContext);
   const [speed, setSpeed] = useState(0);
   const [downloadState, setDownloadState] = useState('waiting' as 'waiting' | 'downloading' | 'downloaded');
+  const history = useHistory();
 
   useEffect(() => {
+    if (params.fileID != null) {
+      context.magnet = params.fileID;
+      history.replace('/download/');
+    }
+  }, [params, context]);
+
+  useEffect(() => {
+    if (context.magnet == null && params.fileID == null) {
+      history.replace('/');
+    }
+  }, [params, context]);
+
+  useEffect(() => {
+    if (context.magnet == null || params.fileID != null) {
+      return;
+    }
+
+    const fileID = context.magnet;
     setDownloadState('downloading');
     const client = new WebTorrent();
     const magnet = Buffer.from(fileID, 'base64').toString('utf-8');
@@ -37,7 +58,7 @@ function Download() {
         });
       });
     });
-  }, [fileID]);
+  }, [context, params]);
 
   const renderState = (state: typeof downloadState) => {
     switch (state) {

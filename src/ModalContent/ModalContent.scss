@@ -22,9 +22,38 @@
   .button {
     margin-top: 16px;
   }
+
+  .url-copy {
+    position: relative;
+    display: flex;
+  }
+
+  .url-copy-input {
+    position: relative;
+    flex: 1 1 auto
+  }
+
+  .url-copy-button {
+    box-sizing: border-box;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    // background-color: red;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    padding: 4px;
+    img {
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      
+    }
+  }
 }
 
 .share-text {
   max-width: 80vw;
   word-wrap: break-word;
+  
 }
