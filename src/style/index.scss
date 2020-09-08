@@ -4,6 +4,7 @@ $primary-color: #ca4095;
 @import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
 
 body {
+  background-color: $background-color;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
