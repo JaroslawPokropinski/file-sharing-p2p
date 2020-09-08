@@ -14,18 +14,16 @@
     "@types/react-modal": "^3.10.5",
     "@types/simple-peer": "^9.6.0",
     "axios": "^0.19.2",
-    "ngx-socket-io": "^3.0.1",
     "node-sass": "^4.14.1",
     "qrcode.react": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-modal": "^3.11.2",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1",
-    "simple-peer": "^9.7.0",
+    "react-scripts": "^3.4.3",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.7.5",
-    "ws": "^7.2.5"
+    "webtorrent": "^0.108.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -51,8 +49,7 @@
   "devDependencies": {
     "@types/qrcode.react": "^1.0.0",
     "@types/react-router-dom": "^5.1.5",
-    "@types/socket.io-client": "^1.4.32",
-    "@types/ws": "^7.2.4",
+    "@types/webtorrent": "^0.107.2",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "eslint": "^6.8.0",
