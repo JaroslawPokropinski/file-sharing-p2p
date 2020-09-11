@@ -18,13 +18,13 @@ function Download() {
       context.magnet = params.fileID;
       history.replace('/download/');
     }
-  }, [params, context]);
+  }, [params, context, history]);
 
   useEffect(() => {
     if (context.magnet == null && params.fileID == null) {
       history.replace('/');
     }
-  }, [params, context]);
+  }, [params, context, history]);
 
   useEffect(() => {
     if (context.magnet == null || params.fileID != null) {
