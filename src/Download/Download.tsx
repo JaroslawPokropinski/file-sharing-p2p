@@ -40,15 +40,16 @@ function Download() {
       // Got torrent metadata!
       console.log('Client is downloading:', torrent.infoHash);
 
-      const intervalUpdateTime = 1000;
-      const interv = setInterval(() => {
+      torrent.on('download', () => {
         setSpeed(torrent.downloadSpeed);
-      }, intervalUpdateTime);
+      });
 
       torrent.on('done', () => {
-        clearInterval(interv);
+        if (downloadState !== 'downloading') return;
+
         setDownloadState('downloaded');
-        torrent.files.forEach(function (file) {
+        console.log('Downloading finished');
+        torrent.files.forEach((file) => {
           console.log(file.name);
           file.getBuffer((err, buf) => {
             if (err == null && buf != null) {
@@ -58,7 +59,7 @@ function Download() {
         });
       });
     });
-  }, [context, params]);
+  }, [context.magnet, params, downloadState]);
 
   const renderState = (state: typeof downloadState) => {
     switch (state) {

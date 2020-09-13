@@ -5,18 +5,15 @@ import Modal from 'react-modal';
 import uploadIcon from './upload.png';
 import ModalContent from '../ModalContent/ModalContent';
 
-function fileDialog(): Promise<File[] | null> {
+function fileDialog(): Promise<FileList | null> {
   const input = document.createElement('input');
   input.type = 'file';
-  input.multiple = false;
-  // input.accept = contentType;
+  input.multiple = true;
   return new Promise(function (resolve) {
     input.onchange = function () {
       if (input.files == null) return resolve();
 
-      const files = Array.from(input.files);
-      return resolve(files);
-      // resolve(files[0]);
+      return resolve(input.files);
     };
     input.click();
   });
@@ -25,7 +22,7 @@ function fileDialog(): Promise<File[] | null> {
 function Share() {
   const [isOverlayHidden, hideOverlay] = useState(true);
   const [isModalShown, showModal] = useState(false);
-  const [file, setFile] = useState(null as File | null);
+  const [files, setFiles] = useState<FileList | File[] | null>(null);
 
   const onDragStartEnd = (ev: React.DragEvent<HTMLDivElement>, start: boolean) => {
     ev.preventDefault();
@@ -52,21 +49,19 @@ function Share() {
       } else {
         files = ev.dataTransfer.files;
       }
-      if (files[0]) {
-        setFile(files[0]);
-      }
+      setFiles(files);
     },
     [hideOverlay],
   );
 
   const promptFile = useCallback(() => {
-    fileDialog().then((file) => {
-      if (file == null) return;
+    fileDialog().then((files) => {
+      if (files == null) return;
       hideOverlay(true);
       showModal(true);
-      setFile(file[0]);
+      setFiles(files);
     });
-  }, [setFile]);
+  }, [setFiles]);
 
   const ShareContent = useCallback(
     ({ isModalShown }: { isModalShown: boolean }) => {
@@ -96,13 +91,13 @@ function Share() {
     <div className="share-root">
       <div className={`${isOverlayHidden ? 'hide-overlay' : 'show-overlay'}`} />
       <Modal
-        isOpen={isModalShown && file != null}
+        isOpen={isModalShown && files != null}
         contentLabel="File modal"
         className="modal"
         overlayClassName="modal-overlay"
         closeTimeoutMS={200}
       >
-        <ModalContent file={file as File} onClose={() => showModal(false)} />
+        <ModalContent files={files} onClose={() => showModal(false)} />
       </Modal>
 
       <ShareContent isModalShown={isModalShown} />

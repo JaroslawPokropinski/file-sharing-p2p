@@ -30,11 +30,19 @@ function UrlCopyComponent({ url }: { url: string }) {
   );
 }
 
-function ModalContent(props: { file: File; onClose: () => void }) {
+function ModalContent(props: { files: File[] | FileList | null; onClose: () => void }) {
   const [uploadState, setUploadState] = useState<'loading' | 'uploading' | 'error'>('loading');
   const [uuid, setUUID] = useState(null as null | string);
 
   useEffect(() => {
+    if (props.files == null) {
+      props.onClose();
+    }
+  }, [props]);
+
+  useEffect(() => {
+    if (props.files == null) return;
+
     const client = new WebTorrent();
 
     client.on('error', (error) => {
@@ -42,12 +50,12 @@ function ModalContent(props: { file: File; onClose: () => void }) {
       console.error(error);
     });
 
-    client.seed(props.file, (torrent) => {
+    client.seed(props.files, (torrent) => {
       setUploadState('uploading');
       const codedMagnet = Buffer.from(torrent.magnetURI).toString('base64');
       setUUID(codedMagnet);
     });
-  }, [props.file, setUUID]);
+  }, [props.files, setUUID]);
 
   const getUrl = () => {
     return `${window.location.href}download/${uuid != null ? uuid : ''}`;
@@ -60,7 +68,13 @@ function ModalContent(props: { file: File; onClose: () => void }) {
         <div>
           <QRCode className="qrcode" renderAs="svg" value={getUrl()} />
         </div>
-        <div>{uploadState === 'uploading' ? shortenString(props.file.name, 30) : 'Loading file...'}</div>
+        <div>
+          {uploadState === 'uploading'
+            ? props.files?.length === 1
+              ? shortenString(props.files[0].name, 30)
+              : 'many files'
+            : 'Loading file...'}
+        </div>
         <UrlCopyComponent url={uuid != null ? getUrl() : ''} />
         <button className="button" onClick={props.onClose}>
           Close
