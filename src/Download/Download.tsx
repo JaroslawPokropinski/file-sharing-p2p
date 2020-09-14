@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import WebTorrent from 'webtorrent';
 import save from './saveToDrive';
 import humanFileSize from './humanBytes';
@@ -7,27 +7,19 @@ import downloadImg from './download_file.png';
 import { DownloadContext } from '../App/App';
 
 function Download() {
-  const params = useParams<{ fileID?: string }>();
   const context = useContext(DownloadContext);
   const [speed, setSpeed] = useState(0);
   const [downloadState, setDownloadState] = useState('waiting' as 'waiting' | 'downloading' | 'downloaded');
   const history = useHistory();
 
   useEffect(() => {
-    if (params.fileID != null) {
-      context.magnet = params.fileID;
-      history.replace('/download/');
-    }
-  }, [params, context, history]);
-
-  useEffect(() => {
-    if (context.magnet == null && params.fileID == null) {
+    if (context.magnet == null) {
       history.replace('/');
     }
-  }, [params, context, history]);
+  }, [context, history]);
 
   useEffect(() => {
-    if (context.magnet == null || params.fileID != null) {
+    if (context.magnet == null) {
       return;
     }
 
@@ -45,8 +37,6 @@ function Download() {
       });
 
       torrent.on('done', () => {
-        if (downloadState !== 'downloading') return;
-
         setDownloadState('downloaded');
         console.log('Downloading finished');
         torrent.files.forEach((file) => {
@@ -59,7 +49,10 @@ function Download() {
         });
       });
     });
-  }, [context.magnet, params, downloadState]);
+    return () => {
+      client.destroy();
+    };
+  }, [context]);
 
   const renderState = (state: typeof downloadState) => {
     switch (state) {

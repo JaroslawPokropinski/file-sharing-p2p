@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Share from '../Share/Share';
 import Download from '../Download/Download';
+import DownloadRedirect from '../Download/DownloadRedirect';
 
 export const DownloadContext = React.createContext<{ magnet: string | null }>({ magnet: null });
 
@@ -10,7 +11,7 @@ function App() {
     <Switch>
       <DownloadContext.Provider value={{ magnet: null }}>
         <Route path="/download/:fileID">
-          <Download />
+          <DownloadRedirect />
         </Route>
         <Route path="/download/">
           <Download />
