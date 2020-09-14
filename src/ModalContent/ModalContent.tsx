@@ -43,6 +43,15 @@ function ModalContent(props: { files: File[] | FileList | null; onClose: () => v
   useEffect(() => {
     if (props.files == null) return;
 
+    console.log(props.files.length);
+    for (let i = 0; i < props.files.length; i++) {
+      console.log(props.files[i].name);
+    }
+  }, [props]);
+
+  useEffect(() => {
+    if (props.files == null) return;
+
     const client = new WebTorrent();
 
     client.on('error', (error) => {
@@ -51,6 +60,7 @@ function ModalContent(props: { files: File[] | FileList | null; onClose: () => v
     });
 
     client.seed(props.files, (torrent) => {
+      console.log(`Hosting ${torrent.files.length} files.`);
       setUploadState('uploading');
       const codedMagnet = Buffer.from(torrent.magnetURI).toString('base64');
       setUUID(codedMagnet);
@@ -73,7 +83,7 @@ function ModalContent(props: { files: File[] | FileList | null; onClose: () => v
             ? props.files?.length === 1
               ? shortenString(props.files[0].name, 30)
               : 'many files'
-            : 'Loading file...'}
+            : 'Loading files...'}
         </div>
         <UrlCopyComponent url={uuid != null ? getUrl() : ''} />
         <button className="button" onClick={props.onClose}>

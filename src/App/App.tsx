@@ -10,13 +10,13 @@ function App() {
   return (
     <Switch>
       <DownloadContext.Provider value={{ magnet: null }}>
-        <Route path="/download/:fileID">
+        <Route path="/download/:fileID" exact>
           <DownloadRedirect />
         </Route>
-        <Route path="/download/">
+        <Route path="/download/" exact>
           <Download />
         </Route>
-        <Route path="/">
+        <Route path="/" exact>
           <Share />
         </Route>
       </DownloadContext.Provider>

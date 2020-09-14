@@ -5,6 +5,8 @@ import save from './saveToDrive';
 import humanFileSize from './humanBytes';
 import downloadImg from './download_file.png';
 import { DownloadContext } from '../App/App';
+import { delay } from '../util/delay';
+import { getTorrentBuffer } from '../util/util';
 
 function Download() {
   const context = useContext(DownloadContext);
@@ -36,17 +38,23 @@ function Download() {
         setSpeed(torrent.downloadSpeed);
       });
 
-      torrent.on('done', () => {
+      torrent.on('done', async () => {
         setDownloadState('downloaded');
         console.log('Downloading finished');
-        torrent.files.forEach((file) => {
-          console.log(file.name);
-          file.getBuffer((err, buf) => {
-            if (err == null && buf != null) {
-              save(file.name, buf);
-            }
-          });
-        });
+        for (let i = 0; i < torrent.files.length; i++) {
+          try {
+            const file = torrent.files[i];
+
+            console.log(file.name);
+            const buf = await getTorrentBuffer(file);
+            if (buf == null) continue;
+
+            save(file.name, buf);
+            await delay(100);
+          } catch (error) {
+            console.error(error);
+          }
+        }
       });
     });
     return () => {
