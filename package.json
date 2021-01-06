@@ -13,7 +13,7 @@
     "@types/react-dom": "^16.9.6",
     "@types/react-modal": "^3.10.5",
     "@types/simple-peer": "^9.6.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "node-sass": "^4.14.1",
     "qrcode.react": "^1.0.0",
     "react": "^16.13.1",
